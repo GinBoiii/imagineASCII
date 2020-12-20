@@ -6,20 +6,20 @@ ASCIIZ =   "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:," + 
 CHAR_WIDTH = 8
 CHAR_HEIGHT = 18
 
-# resize the image.. just as the name implies
+# spremeni velikost slike
 def resize_image(image, scale):
     width, height = image.size
     resized_image = image.resize((int(width*scale), int(height*scale*(CHAR_WIDTH/CHAR_HEIGHT))))
 
     return resized_image
 
-# convert image to grayscale image
+# naredi sivinsko sliko
 def grayimage(image):
     grayscale_image = image.convert("L")
     return grayscale_image
 
 
-# convert each pixel to ascii character based on their grayscale avrage
+# vsakemu pikslu priredi ascii znak glede na njegovo sivost
 def pixels_to_ascii(image):
     pixels = image.getdata()
     chars = "".join([ASCIIZ[ceil(pixel/ceil(255/len(ASCIIZ)))] for pixel in pixels])
@@ -27,8 +27,10 @@ def pixels_to_ascii(image):
 
 
 def main():
+    # prejme vnos poti do slike
     path = input("Enter a valid path to an image:\n")
-    # path = "C:/Users/jerry/Desktop/FRI/P1/zajc.jpg"
+    
+    # testira za napako pri vnosu
     try:
         image = Image.open(path)
     except:
@@ -37,16 +39,16 @@ def main():
     scale = float(input("Enter a scale:\n"))
     if scale < 0.1 or scale > 1.0:
         return -1, "min. scale is 0.1 and max. scale is 1.0"
-    # get image (new) size if resized or not
+    # dobi novo sliko v vsakem primeru
     new_image = resize_image(image, scale)
 
     new_image_data = pixels_to_ascii(grayimage(new_image))
 
-    # reconstruct the image form a string
+    # sestavi sliko iz niza znakov
     pixel_count = len(new_image_data)
     ascii_art = "\n".join(new_image_data[i:(i+new_image.size[0])] for i in range(0, pixel_count, new_image.size[0]))
 
-    # put the ascii art into a text file
+    # ascii art shrani v tekstovno detoteko
     with open("ascii_image.txt", "w") as f:
         f.write(ascii_art)
 
